@@ -67,6 +67,19 @@ describe("StashwiseApi", () => {
     expect(calls[1].headers.Authorization).toBeUndefined();
   });
 
+  it("identifies itself as obsidian so the authorize page can name it", async () => {
+    // Without this the backend defaults to "cli" and the page tells the user to
+    // return to a terminal they never opened.
+    const { transport, calls } = recordingTransport([{ status: 200, text: "{}" }]);
+    const api = new StashwiseApi(transport, base);
+
+    await api.startDeviceCode("Stashwise for Obsidian (My Vault)");
+    expect(JSON.parse(calls[0].body as string)).toEqual({
+      client_label: "Stashwise for Obsidian (My Vault)",
+      client_kind: "obsidian",
+    });
+  });
+
   it("builds URLs against the configured base and tolerates a trailing slash", async () => {
     const { transport, calls } = recordingTransport([{ status: 200, text: "{}" }]);
     const api = new StashwiseApi(transport, () => "http://127.0.0.1:8000/api/v1/");
