@@ -117,10 +117,20 @@ export class StashwiseApi {
     return JSON.parse(res.text) as T;
   }
 
+  /**
+   * Begin a pairing.
+   *
+   * `client_kind` is what lets the authorize page name this client. Without it
+   * the backend defaults to "cli" and the page greets an Obsidian user with
+   * "Authorize the Stashwise CLI" and "Return to your terminal", which is
+   * nonsense on a phone. It is presentational only: the backend's
+   * `principal_for_client_kind` treats everything that is not the extension as
+   * an agent, so the save policy is identical to the CLI's either way.
+   */
   startDeviceCode(clientLabel: string): Promise<DeviceCodeStartResponse> {
     return this.request<DeviceCodeStartResponse>("/auth/cli/start", {
       method: "POST",
-      body: { client_label: clientLabel },
+      body: { client_label: clientLabel, client_kind: "obsidian" },
     });
   }
 
