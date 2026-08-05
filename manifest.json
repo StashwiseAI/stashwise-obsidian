@@ -1,0 +1,10 @@
+{
+  "id": "stashwise",
+  "name": "Stashwise",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Sync your Stashwise library and wiki into your vault, search it from any note, and capture notes back.",
+  "author": "Stashwise",
+  "authorUrl": "https://stashwise.co",
+  "isDesktopOnly": false
+}
