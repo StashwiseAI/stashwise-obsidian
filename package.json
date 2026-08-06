@@ -1,6 +1,6 @@
 {
   "name": "stashwise-obsidian",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Stashwise for Obsidian: sync your saved library and wiki into your vault, search it inline, and capture notes back.",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "dev": "node esbuild.config.mjs",
     "build": "tsc --noEmit --skipLibCheck && node esbuild.config.mjs production && node scripts/verify-mobile.mjs",
     "typecheck": "tsc --noEmit --skipLibCheck",
-    "lint": "eslint .",
+    "lint": "eslint . && node scripts/verify-manifest.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "verify:mobile": "node scripts/verify-mobile.mjs",
