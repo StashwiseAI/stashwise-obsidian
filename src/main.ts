@@ -1,4 +1,4 @@
-import { Notice, Plugin, requestUrl, TFile, WorkspaceLeaf } from "obsidian";
+import { Notice, Plugin, requestUrl, WorkspaceLeaf } from "obsidian";
 import { StashwiseApi, visibleTokenPrefix, type Transport } from "./api/client.js";
 import { runDeviceAuth } from "./auth/deviceAuth.js";
 import { activeMarkdownFile, captureCurrentNote, captureUrl } from "./capture/commands.js";
@@ -47,19 +47,6 @@ export class StashwisePlugin extends Plugin {
   private lastSyncAt = 0;
 
   async onload(): Promise<void> {
-    // Dev builds only. Obsidian caches the module it read when the plugin was
-    // enabled, and an app reload does not re-read a symlinked main.js, so a
-    // fingerprint makes "am I testing the build I just made?" answerable
-    // instead of guessable. Released builds stay silent: Obsidian's guidelines
-    // ask that the console show only errors by default, and esbuild drops this
-    // branch entirely when STASHWISE_DEV is false.
-    if (STASHWISE_DEV) {
-      console.log(
-        `[Stashwise] loaded, bundle ${STASHWISE_BUILD_ID}. ` +
-          "If this differs from the build id npm run build printed, " +
-          "toggle the plugin off and on in Settings.",
-      );
-    }
     await this.loadSettings();
     this.api = new StashwiseApi(obsidianTransport, () => this.settings.apiBaseUrl);
 
@@ -137,17 +124,17 @@ export class StashwisePlugin extends Plugin {
     });
     this.addCommand({
       id: "save-note",
-      name: "Save current note to Stashwise",
+      name: "Save current note",
       checkCallback: (checking) => {
         const file = activeMarkdownFile(this);
         if (!file) return false;
-        if (!checking) void captureCurrentNote(this, file as TFile);
+        if (!checking) void captureCurrentNote(this, file);
         return true;
       },
     });
     this.addCommand({
       id: "save-url",
-      name: "Save URL to Stashwise",
+      name: "Save URL",
       editorCallback: (editor) => void captureUrl(this, editor),
     });
   }
@@ -165,11 +152,14 @@ export class StashwisePlugin extends Plugin {
       leaf = workspace.getRightLeaf(false) ?? workspace.getLeaf(true);
       await leaf.setViewState({ type: STASHWISE_SEARCH_VIEW, active: true });
     }
-    workspace.revealLeaf(leaf);
+    await workspace.revealLeaf(leaf);
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    // loadData() is typed `any`, so narrow before merging rather than letting
+    // arbitrary shapes into settings.
+    const stored = (await this.loadData()) as Partial<StashwiseSettings> | null;
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, stored ?? {});
   }
 
   async saveSettings(): Promise<void> {

@@ -73,7 +73,7 @@ export class StashwiseSettingTab extends PluginSettingTab {
       setting.addButton((button) =>
         button
           .setButtonText("Disconnect")
-          .setWarning()
+          .setDestructive()
           .onClick(async () => {
             await this.plugin.disconnect();
             this.display();
@@ -94,10 +94,14 @@ export class StashwiseSettingTab extends PluginSettingTab {
 
     containerEl.createEl("p", {
       cls: "setting-item-description stashwise-token-warning",
+      // configDir rather than a hardcoded ".obsidian": the config folder is
+      // user-configurable, and pointing someone at a path that does not exist
+      // on their vault is worse than not naming one.
       text:
         "Your access token is stored unencrypted in this vault, at " +
-        ".obsidian/plugins/stashwise/data.json. If you sync this vault to " +
-        "another service, the token syncs with it. Use Disconnect to revoke it.",
+        `${this.app.vault.configDir}/plugins/stashwise/data.json. ` +
+        "If you sync this vault to another service, the token syncs with it. " +
+        "Use Disconnect to revoke it.",
     });
   }
 

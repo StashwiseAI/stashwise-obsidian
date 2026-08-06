@@ -25,7 +25,9 @@ export type AuthResult =
   | { kind: "failed"; message: string };
 
 function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  // window.setTimeout, not the bare global: a popout window has its own
+  // timer scope and Obsidian's guidelines ask for the explicit form.
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 /**
@@ -138,12 +140,11 @@ class DeviceCodeModal extends Modal {
       text: "Approve this vault in your browser, then come back here.",
     });
 
-    const link = contentEl.createEl("p").createEl("a", {
+    contentEl.createEl("p").createEl("a", {
       text: "Open the authorization page",
       href: this.options.verificationUri,
+      attr: { target: "_blank", rel: "noopener" },
     });
-    link.setAttr("target", "_blank");
-    link.setAttr("rel", "noopener");
 
     contentEl.createEl("p", {
       cls: "setting-item-description",

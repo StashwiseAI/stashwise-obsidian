@@ -1,6 +1,8 @@
 import esbuild from "esbuild";
 import process from "process";
-import builtins from "builtin-modules";
+// node:module rather than the builtin-modules package, which the Obsidian
+// review flags as an unnecessary dependency.
+import { builtinModules } from "node:module";
 import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -44,7 +46,10 @@ build: ${BUILD_ID}
 const forbidNodeBuiltins = {
   name: "forbid-node-builtins",
   setup(build) {
-    const forbidden = new Set([...builtins, ...builtins.map((m) => `node:${m}`)]);
+    const forbidden = new Set([
+      ...builtinModules,
+      ...builtinModules.map((m) => `node:${m}`),
+    ]);
     build.onResolve({ filter: /.*/ }, (args) => {
       if (!forbidden.has(args.path)) return null;
       return {
