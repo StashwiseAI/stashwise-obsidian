@@ -1,6 +1,6 @@
 {
   "name": "stashwise-obsidian",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Stashwise for Obsidian: sync your saved library and wiki into your vault, search it inline, and capture notes back.",
   "private": true,
   "type": "module",

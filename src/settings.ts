@@ -48,6 +48,19 @@ export class StashwiseSettingTab extends PluginSettingTab {
   }
 
   display(): void {
+    this.render();
+  }
+
+  /**
+   * Obsidian calls display() when the tab opens. Everything of ours that needs
+   * a redraw afterwards calls this instead.
+   *
+   * Overriding display() is still required at our minAppVersion, but calling
+   * it is not: it is deprecated as of 1.13.0 in favour of
+   * getSettingDefinitions(), and a redraw is our own concern rather than a
+   * request to Obsidian.
+   */
+  private render(): void {
     const { containerEl } = this;
     containerEl.empty();
 
@@ -70,19 +83,19 @@ export class StashwiseSettingTab extends PluginSettingTab {
       const who = account?.email ?? account?.display_name ?? "your account";
       const tier = account?.subscription_tier ?? "free";
       setting.setDesc(`Signed in as ${who} on the ${tier} plan.`);
-      setting.addButton((button) =>
-        button
-          .setButtonText("Disconnect")
-          // setWarning rather than its replacement setDestructive: the latter
-          // arrived in 1.13.0, and this plugin runs on 1.7.2. Deprecated is not
-          // removed, and honouring minAppVersion matters more than the newer
-          // spelling of the same red button. Swap it when the floor rises.
-          .setWarning()
-          .onClick(async () => {
-            await this.plugin.disconnect();
-            this.display();
-          }),
-      );
+      setting.addButton((button) => {
+        button.setButtonText("Disconnect").onClick(async () => {
+          await this.plugin.disconnect();
+          this.render();
+        });
+        // The class directly, rather than setWarning() or setDestructive().
+        // setDestructive() needs 1.13.0 and we support 1.7.2; setWarning() is
+        // deprecated, and on 1.13 it now resolves to setDestructive().setCta().
+        // mod-warning is the class setWarning() applied before that change, it
+        // is still styled in 1.13 (solid error background, plus its own mobile
+        // rule), and it renders the same on both sides of the split.
+        button.buttonEl.addClass("mod-warning");
+      });
     } else {
       setting.setDesc("Connect to sync your library and search it from any note.");
       setting.addButton((button) =>
@@ -91,7 +104,7 @@ export class StashwiseSettingTab extends PluginSettingTab {
           .setCta()
           .onClick(async () => {
             await this.plugin.connect();
-            this.display();
+            this.render();
           }),
       );
     }
@@ -217,7 +230,7 @@ export class StashwiseSettingTab extends PluginSettingTab {
               return;
             }
             const applied = await this.plugin.useToken(pasted);
-            if (applied) this.display();
+            if (applied) this.render();
           }),
         );
     }

@@ -30,19 +30,48 @@ exist at the `minAppVersion` in `manifest.json`. TypeScript has no concept of
 `@since`, so nothing else catches it. Twice this shipped to review and came back
 as a blocking error, once for `revealLeaf` and once for `setDestructive`.
 
-The lint run is expected to be clean of errors and to carry a handful of
-warnings, all one decision:
+The lint run is expected to be clean of errors, and to carry exactly one
+warning:
 
-> `display` is deprecated, use `getSettingDefinitions`
-> `setWarning` is deprecated, use `setDestructive`
+> This PluginSettingTab does not implement getSettingDefinitions()
 
-Both replacements arrived in Obsidian **1.13.0** (2026-05-28). Adopting them
-means raising `minAppVersion` to 1.13.0 and dropping every user who has not
-updated. Mobile is where update lag is worst, and mobile capture is the reason
-this plugin exists, so the floor stays at 1.7.2 and the deprecated spellings
-stay. Revisit when 1.13 is unremarkable; the change is mechanical.
+That one is deliberate, and it is not cheap to clear. Read the next section
+before you try.
 
-Do not silence those warnings. They are the reminder.
+## The settings tab renders two ways, and you can only pick one
+
+Obsidian 1.13.0 added a declarative settings API. 1.13.4 dispatches like this:
+
+```js
+renderTab = function () { this.settingItems.length > 0 ? V2(this) : this.display() }
+```
+
+`settingItems` is whatever `getSettingDefinitions()` returned, and the base
+class returns `[]`. So today 1.13 falls through to our `display()`, which is why
+the tab works. **Return a non-empty array and `display()` is never called
+again** on 1.13 or later. There is no merging of the two.
+
+That makes adoption all or nothing. A partial port silently deletes every
+setting it missed, for exactly the users on the newer version, while older
+users still see the complete tab through `display()` and notice nothing. The
+payoff is that settings become findable in Obsidian's settings search.
+
+If you take it on: port every item including the conditional account section
+and the paste-token row, keep `display()` working for the 1.7.2 floor, and test
+on both sides of 1.13. Obsidian's own tabs use a `render:` escape hatch per
+item, so most rows are a mechanical conversion.
+
+Two things that look like they should be part of this and are not:
+
+- **`display()` is deprecated but still required.** Overriding it is fine and
+  draws no warning; only *calling* it does. Internal redraws go through the
+  private `render()` instead.
+- **`setWarning()` is deprecated in favour of `setDestructive()`, which needs
+  1.13.0.** The Disconnect button adds the `mod-warning` class directly. That
+  is the class `setWarning()` applied before 1.13, it is still styled there
+  (`button.mod-warning`, solid error background, with its own mobile rule), and
+  it renders the same as what `setWarning()` now produces, which is
+  `setDestructive().setCta()`.
 
 ## Two things that will waste your time
 
