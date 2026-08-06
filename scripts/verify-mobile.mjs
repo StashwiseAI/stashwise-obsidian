@@ -57,11 +57,11 @@ if (failures.length) {
 // earlier version hashed the bundle bytes while esbuild hashed the sources, so
 // the two ids never matched and the check reported a stale plugin every time.
 // A diagnostic that can produce a false alarm is worse than none.
-const stamped = source.match(/loaded, bundle ([a-f0-9]{8})/);
+const stamped = source.match(/^build: ([a-f0-9]{8})$/m);
 if (!stamped) {
   console.error(
-    "Build id missing from the bundle. esbuild.config.mjs should define " +
-      "STASHWISE_BUILD_ID and main.ts should log it.",
+    "Build id missing from the bundle banner. esbuild.config.mjs should emit " +
+      "`build: <id>` in its banner.",
   );
   process.exit(1);
 }

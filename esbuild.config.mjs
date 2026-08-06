@@ -5,11 +5,6 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-const banner = `/*
-Generated bundle. Source: https://github.com/StashwiseAI/stashwise-obsidian
-*/
-`;
-
 const prod = process.argv[2] === "production";
 
 // Fingerprint the sources so the running plugin can say which build it is.
@@ -31,6 +26,15 @@ function hashSources(dir) {
   return hash.digest("hex").slice(0, 8);
 }
 const BUILD_ID = hashSources("src");
+
+// The id lives in the banner, not in code. A production build strips the dev
+// console.log that used to carry it, and the mobile check still needs a way to
+// report which build it inspected.
+const banner = `/*
+Generated bundle. Source: https://github.com/StashwiseAI/stashwise-obsidian
+build: ${BUILD_ID}
+*/
+`;
 
 // manifest.json declares isDesktopOnly:false, which is a promise that nothing
 // in this bundle touches a NodeJS or Electron API. The sample plugin config
@@ -72,7 +76,13 @@ const options = {
   treeShaking: true,
   outfile: "main.js",
   minify: prod,
-  define: { STASHWISE_BUILD_ID: JSON.stringify(BUILD_ID) },
+  define: {
+    STASHWISE_BUILD_ID: JSON.stringify(BUILD_ID),
+    // Literal `false` in a production build, so esbuild removes the branch and
+    // the released bundle logs nothing. Obsidian asks that the console show
+    // only errors by default.
+    STASHWISE_DEV: JSON.stringify(!prod),
+  },
   plugins: [forbidNodeBuiltins],
 };
 

@@ -1,0 +1,64 @@
+name: Release
+
+# Obsidian installs a plugin from the assets attached to a GitHub release, and
+# the release tag must match `version` in manifest.json exactly, with no `v`
+# prefix. main.js is gitignored, so it is built here rather than committed.
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+  # Required by actions/attest-build-provenance, so the published main.js can be
+  # traced back to this workflow run and commit.
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+          cache: npm
+
+      - run: npm ci
+
+      # A tag must not be able to ship a failing build. The build step also runs
+      # the typecheck and the mobile safety gate, which is what keeps the
+      # isDesktopOnly:false promise honest.
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # Catch the mistake this workflow cannot otherwise see: a tag that does
+      # not match the manifest produces a release Obsidian will refuse.
+      - name: Check the tag matches manifest.json
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          MANIFEST=$(node -p "require('./manifest.json').version")
+          if [ "$TAG" != "$MANIFEST" ]; then
+            echo "Tag '$TAG' does not match manifest version '$MANIFEST'."
+            echo "Obsidian requires them to be identical."
+            exit 1
+          fi
+          echo "Tag and manifest agree on $TAG"
+
+      - uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: main.js
+
+      - name: Draft the release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF#refs/tags/}" \
+            --title "${GITHUB_REF#refs/tags/}" \
+            --draft \
+            main.js manifest.json styles.css

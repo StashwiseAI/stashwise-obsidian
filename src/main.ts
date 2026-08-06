@@ -47,15 +47,19 @@ export class StashwisePlugin extends Plugin {
   private lastSyncAt = 0;
 
   async onload(): Promise<void> {
-    // Obsidian caches the module it read when the plugin was enabled, and an
-    // app reload does not re-read a symlinked main.js. Logging a fingerprint
-    // of the running bundle makes "am I testing the build I just made?"
-    // answerable instead of guessable.
-    console.log(
-      `[Stashwise] loaded, bundle ${STASHWISE_BUILD_ID}. ` +
-        "If this differs from the build id npm run build printed, " +
-        "toggle the plugin off and on in Settings.",
-    );
+    // Dev builds only. Obsidian caches the module it read when the plugin was
+    // enabled, and an app reload does not re-read a symlinked main.js, so a
+    // fingerprint makes "am I testing the build I just made?" answerable
+    // instead of guessable. Released builds stay silent: Obsidian's guidelines
+    // ask that the console show only errors by default, and esbuild drops this
+    // branch entirely when STASHWISE_DEV is false.
+    if (STASHWISE_DEV) {
+      console.log(
+        `[Stashwise] loaded, bundle ${STASHWISE_BUILD_ID}. ` +
+          "If this differs from the build id npm run build printed, " +
+          "toggle the plugin off and on in Settings.",
+      );
+    }
     await this.loadSettings();
     this.api = new StashwiseApi(obsidianTransport, () => this.settings.apiBaseUrl);
 

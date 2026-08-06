@@ -1,59 +1,110 @@
 # Stashwise for Obsidian
 
-Your [Stashwise](https://stashwise.co) library and wiki, as notes in your vault.
-Search them from anywhere in Obsidian, and send what you write back.
+Bring your [Stashwise](https://stashwise.co) library and wiki into your vault as
+real notes, search them from anywhere in Obsidian, and send what you write back.
 
-Stashwise saves things you find on the web, on social platforms and in video,
-then reads them and builds a wiki of the topics that keep recurring. This plugin
-brings that into the vault where you already think, so saved material sits
-beside your own writing instead of behind another app.
+Stashwise saves what you find on the web, on social platforms and in video, then
+reads it and builds a wiki of the topics that keep coming up. This plugin puts
+that in the vault where you already think, so saved material sits beside your
+own writing instead of behind another app.
 
-## What it does
+## Install
 
-**Syncs your library into the vault.** Every save becomes a note with its
-summary, key takeaways and source link. Every published wiki topic becomes its
-own note, linked to the topics it relates to, so Obsidian's graph view renders
-your actual knowledge graph rather than an empty circle.
+### From Obsidian
 
-**Searches without leaving the note you are writing.** A sidebar panel and two
-commands query your whole library and wiki, then drop a link or a quoted callout
-straight at the cursor.
+1. Open **Settings** with `Cmd/Ctrl + ,`
+2. Go to **Community plugins** in the left sidebar
+3. If you see **Restricted mode**, click **Turn on community plugins**
+4. Click **Browse**
+5. Search for **Stashwise**
+6. Click **Install**, then **Enable**
 
-**Sends your thinking back.** Anything you write underneath a synced note is
-pushed to Stashwise as your note on that item, so it is there in the app and in
-chat, not stranded in one vault.
+That is it. Skip to [First run](#first-run).
 
-**Runs on your phone.** Save something in the Stashwise app, open Obsidian
-mobile, and the note is there.
+### Before it reaches the directory
+
+Stashwise is awaiting review, so it may not appear in Browse yet. Until it does,
+install it with [BRAT](https://github.com/TfTHacker/obsidian42-brat), the usual
+way Obsidian users run a plugin ahead of approval:
+
+1. Install **BRAT** from Community plugins and enable it
+2. Run **BRAT: Add a beta plugin for testing** from the command palette
+   (`Cmd/Ctrl + P`)
+3. Paste `StashwiseAI/stashwise-obsidian`
+4. Choose the latest version and click **Add plugin**
+5. Enable **Stashwise** under Community plugins
+
+BRAT also keeps it updated as new versions ship.
+
+### Manually
+
+1. Download `main.js`, `manifest.json` and `styles.css` from the
+   [latest release](https://github.com/StashwiseAI/stashwise-obsidian/releases/latest)
+2. Create the folder `.obsidian/plugins/stashwise/` inside your vault
+3. Put the three files in it
+4. Restart Obsidian, then enable **Stashwise** under Community plugins
+
+On mobile the `.obsidian` folder is hidden, so this is easiest with a vault you
+sync from a computer.
+
+## First run
+
+**Connect your account.** Settings, **Stashwise**, click **Connect account**. A
+browser opens (or the Stashwise app, on iPhone) where you approve the
+connection. Obsidian connects a few seconds later. You need a Stashwise account;
+the free plan works.
+
+**Sync.** It syncs on its own every 15 minutes, or run **Stashwise: Sync now**
+from the command palette to start immediately. The first sync takes a moment if
+your library is large.
+
+**Look in your vault.** A `Stashwise` folder appears:
+
+```
+Stashwise/
+  Saves/    one note per saved item
+  Topics/   one note per wiki topic, linked to related topics
+```
+
+**Open graph view** (`Cmd/Ctrl + G`). Your topics are linked to each other, so
+the graph shows the shape of what you have been reading rather than a scatter of
+unconnected notes.
+
+## Using it
+
+**Search without leaving your note.** Click the search icon in the left ribbon
+to open the Stashwise panel, or run **Stashwise: Search and insert a link** from
+the command palette to search and drop a result at your cursor without touching
+the mouse.
+
+| Command | What it does |
+|---|---|
+| Search and insert a link | Drops `[Title](url)` at the cursor |
+| Search and insert a quote | Drops a quote callout with the snippet |
+| Open search panel | Opens the sidebar, also on the ribbon |
+| Save current note to Stashwise | Sends this note up as a library item |
+| Save URL to Stashwise | Saves a URL from your selection or the current line |
+| Sync now | Pulls anything that changed |
+| Full resync | Rebuilds everything, and tidies notes for deleted items |
+
+**Write back.** Anything you type underneath a synced note is sent to Stashwise
+as your note on that item, so it is there in the app and in chat too.
 
 ## Your writing is never overwritten
 
-This is the promise the whole plugin is built around, so it is worth stating
-plainly.
+This is the promise the plugin is built around.
 
 Each synced note has a region Stashwise owns, marked by comments that stay
-invisible in reading view:
+invisible while reading:
 
 ```markdown
----
-stashwise_id: 75a369c2-3d84-40dd-8026-373b86ac03e6
-stashwise_type: topic
-category: tool
-mention_count: 1
-tags: [tool]
----
-
 %% stashwise:begin %%
 # Jukdo
 
-Jukdo is a traditional Korean folding knife, also known as a Korean folding
-knife, as showcased in a saved video.
+Jukdo is a traditional Korean folding knife.
 
 ## Related
 - [[Korean folding knife]] _(extends)_
-
-## Sources
-- [Agnes AI: Free AI Models](https://v.douyin.com/jCm-gDrfGRw/)
 %% stashwise:end %%
 
 ## My notes
@@ -61,129 +112,47 @@ knife, as showcased in a saved video.
 Everything down here is yours. It is never touched.
 ```
 
-Everything between the markers is regenerated on every sync. Everything below
-the end marker belongs to you: the plugin never edits it, and sends it up to
-Stashwise instead.
+Everything between the markers is refreshed on every sync. Everything below the
+end marker belongs to you.
 
-If those markers are missing or duplicated, **the plugin refuses to write to
-that file at all** and tells you it skipped it. It will not guess where your
-text begins. A note you have to repair is recoverable; overwritten writing is
-not.
-
-## Install
-
-Not yet in the community plugin directory, and there is no published release
-yet, so build it:
-
-```bash
-git clone https://github.com/StashwiseAI/stashwise-obsidian.git
-cd stashwise-obsidian
-npm install && npm run build
-```
-
-Copy `main.js`, `manifest.json` and `styles.css` into
-`<your vault>/.obsidian/plugins/stashwise/`, then enable **Stashwise** under
-Settings, Community plugins.
-
-Once releases exist, the three files will be attached to each one and this step
-becomes a download.
-
-## Connect
-
-Settings, Stashwise, **Connect account**. Approve the pairing in the browser
-that opens, or on iOS in the Stashwise app if you have it, and the plugin
-connects within a few seconds.
-
-You need a Stashwise account. The free plan works.
-
-## Commands
-
-| Command | What it does |
-|---|---|
-| Open search panel | Search sidebar, also on the ribbon |
-| Search and insert a link | Find something, drop `[Title](url)` at the cursor |
-| Search and insert a quote | Same, as a `> [!quote]` callout with the snippet |
-| Save current note to Stashwise | Sends the note up as a library item |
-| Save URL to Stashwise | Saves a URL from the selection or cursor line |
-| Sync now | Pulls changes since the last sync |
-| Full resync | Rebuilds everything and reconciles deletions |
-| Connect account | Pairs this vault with your account |
-
-Search results are also insertable by mouse from the sidebar panel.
-
-## What lands in the vault
-
-```
-Stashwise/
-  Saves/    one note per saved item
-  Topics/   one note per published wiki topic, cross linked
-```
-
-The folder name is configurable. Nothing outside it is ever touched.
-
-Filenames keep letters in any script, so a topic called 松露鳕鱼卷 gets a note
-you can actually find.
+If those markers go missing, **the plugin refuses to write to that file** and
+tells you it skipped it. It will not guess where your writing begins. A note you
+have to repair is recoverable; overwritten writing is not.
 
 ## Settings
 
-| Setting | Default | Notes |
+| Setting | Default | What it does |
 |---|---|---|
-| Vault folder | `Stashwise` | Everything the plugin writes lives here |
-| What to sync | Saves and wiki topics | Topics are what make the graph view useful |
-| Sync every | 15 minutes | `0` syncs only when you ask |
+| Vault folder | `Stashwise` | Everything the plugin writes lives here. Nothing outside it is touched |
+| What to sync | Saves and wiki topics | Topics are what make graph view worth opening |
+| Sync every | 15 minutes | Set to `0` to sync only when you ask |
 | Delete notes for removed saves | Off | See below |
-| API URL | Stashwise production | Point at a local backend while developing |
 
 **Delete notes for removed saves is off on purpose.** Deleting something in
-Stashwise should not silently remove a vault note you may have written your own
+Stashwise should not quietly remove a vault note you may have written your own
 thinking underneath. Turn it on and removed items go to the system trash, where
-they are still recoverable.
+you can still get them back.
 
-Deletions are reconciled on a full resync rather than every sync, because
-detecting them means asking the server for every id you own.
+## Your data
 
-## Your token
+The plugin talks only to Stashwise. It reads nothing in your vault except the
+`Stashwise` folder and any note you explicitly ask it to save.
 
-Connecting stores an access token in
-`<vault>/.obsidian/plugins/stashwise/data.json`, unencrypted. That is how every
-Obsidian plugin holding an API key works, but it has a consequence worth
-knowing: **if you sync your vault through iCloud, Dropbox or Obsidian Sync, the
-token syncs with it.**
+Connecting stores an access token in `.obsidian/plugins/stashwise/data.json`,
+unencrypted. That is how every Obsidian plugin holding an API key works, and it
+has a consequence worth knowing: **if you sync your vault through iCloud,
+Dropbox or Obsidian Sync, the token goes with it.**
 
-**Disconnect** revokes it on the server, not just locally, so a copy that has
-travelled elsewhere stops working.
+**Disconnect** revokes the token on the server, not just locally, so a copy that
+has travelled elsewhere stops working.
 
-The plugin talks only to Stashwise. It reads nothing outside its own folder
-except the note you explicitly ask it to save.
+## Help
 
-## Development
+Something wrong, or an idea?
+[Open an issue](https://github.com/StashwiseAI/stashwise-obsidian/issues).
 
-```bash
-npm install
-npm run dev     # esbuild watch, emits main.js
-npm test        # unit tests
-npm run build   # typecheck, bundle, and the mobile safety gate
-npm run e2e     # end to end against a real backend, see TESTING.md
-```
-
-Use a throwaway vault, never one you care about. Symlink the build output into
-`<dev vault>/.obsidian/plugins/stashwise/`.
-
-Two things that will save you time:
-
-**Obsidian caches the plugin at load.** Reloading the app does not re-read a
-symlinked `main.js`. Toggle the plugin off and on under Community plugins. Each
-build prints a fingerprint and the plugin logs the one it is running, so the
-console tells you whether you are testing what you just built.
-
-**The build enforces mobile support.** `manifest.json` sets
-`isDesktopOnly: false`, so the build fails on any NodeJS import and a
-post-build check rejects `process.env`, `__dirname` or `Buffer` reaching the
-bundle. That promise is why the plugin can run on a phone at all.
-
-`TESTING.md` has the full guide, including how to run everything against a local
-backend.
+Want to work on it? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-MIT
+[MIT](LICENSE)
