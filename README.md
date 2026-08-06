@@ -17,7 +17,8 @@ share sheet, open Obsidian on the same phone, and the note is waiting for you.
 
 ## Install
 
-### From Obsidian
+Stashwise is in Obsidian's community plugin directory, so it installs from
+inside the app. No downloads, and nothing to copy into your vault.
 
 1. Open **Settings** with `Cmd/Ctrl + ,`
 2. Go to **Community plugins** in the left sidebar
@@ -28,31 +29,26 @@ share sheet, open Obsidian on the same phone, and the note is waiting for you.
 
 That is it. Skip to [First run](#first-run).
 
-### Before it reaches the directory
+The same steps work on iOS and Android, and Obsidian keeps the plugin updated
+from there. Its directory page is
+[community.obsidian.md/plugins/stashwise](https://community.obsidian.md/plugins/stashwise).
 
-Stashwise is awaiting review, so it may not appear in Browse yet. Until it does,
-install it with [BRAT](https://github.com/TfTHacker/obsidian42-brat), the usual
-way Obsidian users run a plugin ahead of approval:
+<details>
+<summary>Installing a specific version by hand</summary>
 
-1. Install **BRAT** from Community plugins and enable it
-2. Run **BRAT: Add a beta plugin for testing** from the command palette
-   (`Cmd/Ctrl + P`)
-3. Paste `StashwiseAI/stashwise-obsidian`
-4. Choose the latest version and click **Add plugin**
-5. Enable **Stashwise** under Community plugins
-
-BRAT also keeps it updated as new versions ship.
-
-### Manually
+Worth doing only if you need a version other than the current one, or you are
+testing a build before it ships.
 
 1. Download `main.js`, `manifest.json` and `styles.css` from the
-   [latest release](https://github.com/StashwiseAI/stashwise-obsidian/releases/latest)
+   [releases page](https://github.com/StashwiseAI/stashwise-obsidian/releases)
 2. Create the folder `.obsidian/plugins/stashwise/` inside your vault
 3. Put the three files in it
 4. Restart Obsidian, then enable **Stashwise** under Community plugins
 
 On mobile the `.obsidian` folder is hidden, so this is easiest with a vault you
 sync from a computer.
+
+</details>
 
 ## First run
 
