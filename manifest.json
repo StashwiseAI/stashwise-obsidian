@@ -1,9 +1,9 @@
 {
   "id": "stashwise",
   "name": "Stashwise",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "minAppVersion": "1.7.2",
-  "description": "Sync your Stashwise library and wiki into your vault, search it from any note, and share a video or article from your phone to find its processed note already there.",
+  "description": "Stashwise reads the videos, posts and articles you save from your phone and writes the summary and key points. Those notes land in your vault, ready to search, link and build on.",
   "author": "Stashwise",
   "authorUrl": "https://stashwise.co",
   "isDesktopOnly": false
