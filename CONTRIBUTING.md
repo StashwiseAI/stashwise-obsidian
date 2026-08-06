@@ -6,6 +6,7 @@ cd stashwise-obsidian
 npm install
 npm run dev      # esbuild watch, writes main.js
 npm test         # unit tests
+npm run lint     # the Obsidian directory's own ruleset
 npm run build    # typecheck, bundle, mobile safety gate
 ```
 
@@ -18,6 +19,30 @@ ln -sf "$PWD/main.js"       <dev-vault>/.obsidian/plugins/stashwise/main.js
 ln -sf "$PWD/manifest.json" <dev-vault>/.obsidian/plugins/stashwise/manifest.json
 ln -sf "$PWD/styles.css"    <dev-vault>/.obsidian/plugins/stashwise/styles.css
 ```
+
+## minAppVersion is a promise TypeScript cannot check
+
+`npm run lint` runs `eslint-plugin-obsidianmd`, the same ruleset the community
+directory runs against a submitted release. Run it before tagging. Its
+`no-unsupported-api` rule is the reason it is here: the `obsidian` package
+resolves to the newest typings, so `tsc` happily accepts an API that did not
+exist at the `minAppVersion` in `manifest.json`. TypeScript has no concept of
+`@since`, so nothing else catches it. Twice this shipped to review and came back
+as a blocking error, once for `revealLeaf` and once for `setDestructive`.
+
+The lint run is expected to be clean of errors and to carry a handful of
+warnings, all one decision:
+
+> `display` is deprecated, use `getSettingDefinitions`
+> `setWarning` is deprecated, use `setDestructive`
+
+Both replacements arrived in Obsidian **1.13.0** (2026-05-28). Adopting them
+means raising `minAppVersion` to 1.13.0 and dropping every user who has not
+updated. Mobile is where update lag is worst, and mobile capture is the reason
+this plugin exists, so the floor stays at 1.7.2 and the deprecated spellings
+stay. Revisit when 1.13 is unremarkable; the change is mechanical.
+
+Do not silence those warnings. They are the reminder.
 
 ## Two things that will waste your time
 
@@ -101,12 +126,14 @@ run it against a real library.
 
 Maintainers only.
 
-1. Bump the version in `manifest.json`, `package.json` and `versions.json`; all
+1. `npm run lint` and fix every **error**. Warnings are expected; see
+   minAppVersion above. An error here becomes a rejected directory review
+2. Bump the version in `manifest.json`, `package.json` and `versions.json`; all
    three must agree
-2. Tag it exactly, with no `v` prefix: `git tag -a 1.0.1 -m "1.0.1" && git push origin 1.0.1`
-3. `.github/workflows/release.yml` builds, tests and drafts a release with
-   `main.js`, `manifest.json` and `styles.css` attached
-4. Add notes and publish the draft
+3. Tag it exactly, with no `v` prefix: `git tag -a 1.0.2 -m "1.0.2" && git push origin 1.0.2`
+4. `.github/workflows/release.yml` tests, lints, builds, attests and drafts a
+   release with `main.js`, `manifest.json` and `styles.css` attached
+5. Add notes and publish the draft
 
 Obsidian's directory reads `manifest.json` from the default branch, and installs
 the assets from the release, so the tag and the manifest version must match.

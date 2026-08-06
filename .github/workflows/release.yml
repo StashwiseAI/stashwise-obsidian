@@ -34,6 +34,13 @@ jobs:
       - name: Test
         run: npm test
 
+      # The community directory runs this exact ruleset against a submitted
+      # release, so running it here is what stops an API newer than
+      # minAppVersion reaching review. Warnings do not fail the build; errors
+      # do, and errors are what block the directory.
+      - name: Lint
+        run: npm run lint
+
       - name: Build
         run: npm run build
 
@@ -50,9 +57,16 @@ jobs:
           fi
           echo "Tag and manifest agree on $TAG"
 
+      # Every asset attached below needs provenance, not just main.js. A user
+      # verifying the release should be able to trace each file they install
+      # back to this run and commit, and manifest.json is the one Obsidian
+      # reads to decide what to install.
       - uses: actions/attest-build-provenance@v1
         with:
-          subject-path: main.js
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
 
       - name: Draft the release
         env:

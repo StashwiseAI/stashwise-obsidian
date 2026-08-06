@@ -150,7 +150,7 @@ class DeviceCodeModal extends Modal {
       cls: "setting-item-description",
       text: `Or visit ${this.options.webBaseUrl}/cli and enter this code:`,
     });
-    contentEl.createEl("div", {
+    contentEl.createDiv({
       cls: "stashwise-user-code",
       text: this.options.userCode,
     });
