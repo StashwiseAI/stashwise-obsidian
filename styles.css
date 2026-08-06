@@ -15,10 +15,12 @@
   user-select: text;
 }
 
+/* Applied to a whole settings row, not a paragraph: the declarative settings
+   API renders rows, and describing this warning as one is what puts it in
+   Obsidian's settings search. */
 .stashwise-token-warning {
-  margin-top: 0.75em;
   border-left: 3px solid var(--background-modifier-border);
-  padding-left: 0.75em;
+  padding-left: var(--size-4-3);
 }
 
 .stashwise-search-controls {

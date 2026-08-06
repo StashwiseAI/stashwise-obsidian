@@ -30,15 +30,13 @@ exist at the `minAppVersion` in `manifest.json`. TypeScript has no concept of
 `@since`, so nothing else catches it. Twice this shipped to review and came back
 as a blocking error, once for `revealLeaf` and once for `setDestructive`.
 
-The lint run is expected to be clean of errors, and to carry exactly one
-warning:
+The lint run is expected to be completely clean, no errors and no warnings. If
+you add a warning, fix it rather than leaving it; there is nothing in this repo
+that is expected to be noisy.
 
-> This PluginSettingTab does not implement getSettingDefinitions()
+## The settings tab renders two ways, and Obsidian picks one
 
-That one is deliberate, and it is not cheap to clear. Read the next section
-before you try.
-
-## The settings tab renders two ways, and you can only pick one
+This is the thing to understand before touching `src/settings.ts`.
 
 Obsidian 1.13.0 added a declarative settings API. 1.13.4 dispatches like this:
 
@@ -46,32 +44,43 @@ Obsidian 1.13.0 added a declarative settings API. 1.13.4 dispatches like this:
 renderTab = function () { this.settingItems.length > 0 ? V2(this) : this.display() }
 ```
 
-`settingItems` is whatever `getSettingDefinitions()` returned, and the base
-class returns `[]`. So today 1.13 falls through to our `display()`, which is why
-the tab works. **Return a non-empty array and `display()` is never called
-again** on 1.13 or later. There is no merging of the two.
+`settingItems` is whatever `getSettingDefinitions()` returned. So on 1.13 and
+later our declarative definitions render and **`display()` is never called**;
+below 1.13 there is no declarative API at all and `display()` is the only path.
+The two are never merged, and Obsidian never renders both.
 
-That makes adoption all or nothing. A partial port silently deletes every
-setting it missed, for exactly the users on the newer version, while older
-users still see the complete tab through `display()` and notice nothing. The
-payoff is that settings become findable in Obsidian's settings search.
+Writing the rows out once per renderer would therefore fail silently. A row
+present in one list and missing from the other disappears only for the versions
+that use that renderer, and looks perfectly fine when you test on the other.
 
-If you take it on: port every item including the conditional account section
-and the paste-token row, keep `display()` working for the 1.7.2 floor, and test
-on both sides of 1.13. Obsidian's own tabs use a `render:` escape hatch per
-item, so most rows are a mechanical conversion.
+So the rows are not written in either renderer. `sections()` describes them
+once, and both `getSettingDefinitions()` and `display()` read it:
 
-Two things that look like they should be part of this and are not:
+```
+sections()  ->  getSettingDefinitions()   Obsidian >= 1.13, and settings search
+            ->  renderImperatively()      Obsidian <  1.13, via display()
+```
 
+Add a row to `sections()` and it appears on both. There is no second list.
+
+Three related traps:
+
+- **Redrawing.** `update()` is how 1.13 re-reads the definitions and
+  re-evaluates every `visible()` predicate, but it does not exist at our
+  minAppVersion, so it cannot be called directly. `refresh()` detects it at
+  runtime and falls back to re-running the imperative render.
 - **`display()` is deprecated but still required.** Overriding it is fine and
-  draws no warning; only *calling* it does. Internal redraws go through the
-  private `render()` instead.
+  draws no warning; only *calling* it does.
 - **`setWarning()` is deprecated in favour of `setDestructive()`, which needs
   1.13.0.** The Disconnect button adds the `mod-warning` class directly. That
   is the class `setWarning()` applied before 1.13, it is still styled there
   (`button.mod-warning`, solid error background, with its own mobile rule), and
   it renders the same as what `setWarning()` now produces, which is
   `setDestructive().setCta()`.
+
+`src/settings.ts` imports `obsidian` at runtime, so the unit tests cannot load
+it. Changes there need checking in a real vault, and on 1.13 or later the
+declarative path is the one you are looking at.
 
 ## Two things that will waste your time
 

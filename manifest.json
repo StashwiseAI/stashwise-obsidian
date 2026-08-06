@@ -1,7 +1,7 @@
 {
   "id": "stashwise",
   "name": "Stashwise",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "minAppVersion": "1.7.2",
   "description": "Sync your Stashwise library and wiki into your vault, search it from any note, and capture notes back.",
   "author": "Stashwise",
