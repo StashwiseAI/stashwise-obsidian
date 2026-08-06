@@ -34,6 +34,30 @@ The lint run is expected to be completely clean, no errors and no warnings. If
 you add a warning, fix it rather than leaving it; there is nothing in this repo
 that is expected to be noisy.
 
+### manifest.json needs its own config block
+
+`eslint.config.mjs` lints `manifest.json` explicitly. Do not remove that block.
+
+`validate-manifest` returns early unless the file being linted *is*
+`manifest.json`, yet the plugin's recommended config only registers it for `.js`
+and `.ts` files. So out of the box the rule never runs, and eslint skips the
+manifest entirely with "no matching configuration was supplied". A clean lint
+then tells you nothing at all about the manifest. That is how a description
+containing the word "Obsidian" reached a published release and came back as a
+rejection.
+
+The rule wants a plain ESTree `ObjectExpression`, so the TypeScript parser is
+the one that works. `jsonc-eslint-parser` produces `JSONObjectExpression` and
+the rule rejects the file as not being an object.
+
+The description constraints are stricter than they look, and the checks
+short-circuit so you may only see one violation at a time:
+
+- 10 to 250 characters, starts with a capital, ends with a period
+- must not contain the words "Obsidian" or "plugin", in any casing
+- characters limited to `A-Za-z0-9`, whitespace, and `. , ! ? ' " -`, which
+  means **no colon**, no parentheses and no slash
+
 ## The settings tab renders two ways, and Obsidian picks one
 
 This is the thing to understand before touching `src/settings.ts`.

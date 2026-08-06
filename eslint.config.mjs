@@ -3,9 +3,28 @@
 // instead of in a review round: no-unsupported-api compares every API call
 // against the minAppVersion in manifest.json, which TypeScript cannot do
 // because it has no concept of @since.
+import tsParser from "@typescript-eslint/parser";
 import obsidianmd from "eslint-plugin-obsidianmd";
 
 export default [
+  {
+    // validate-manifest returns early unless the file being linted IS
+    // manifest.json, but the recommended config only registers it for .js and
+    // .ts files, so it never runs and eslint skips manifest.json entirely with
+    // "no matching configuration was supplied". A clean lint therefore said
+    // nothing whatsoever about the manifest, which is how a description
+    // containing the word "Obsidian" reached a published release.
+    //
+    // The rule wants a plain ESTree ObjectExpression, so the TypeScript parser
+    // is the one that fits; jsonc-eslint-parser yields JSONObjectExpression
+    // and the rule rejects the file as not being an object at all.
+    files: ["manifest.json"],
+    languageOptions: { parser: tsParser },
+    plugins: { obsidianmd },
+    rules: {
+      "obsidianmd/validate-manifest": "error",
+    },
+  },
   {
     ignores: [
       "main.js",

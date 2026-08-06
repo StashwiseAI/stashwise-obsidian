@@ -1,9 +1,9 @@
 {
   "id": "stashwise",
   "name": "Stashwise",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "minAppVersion": "1.7.2",
-  "description": "Sync your Stashwise library and wiki into your vault, search it from any note, and save from your phone: share a video or article and its processed note lands in Obsidian.",
+  "description": "Sync your Stashwise library and wiki into your vault, search it from any note, and share a video or article from your phone to find its processed note already there.",
   "author": "Stashwise",
   "authorUrl": "https://stashwise.co",
   "isDesktopOnly": false
