@@ -61,9 +61,10 @@ export class ObsidianVaultIO implements VaultIO {
   async trash(path: string): Promise<void> {
     const file = this.file(path);
     if (!file) return;
-    // System trash, not permanent deletion: a wrong call here should be
-    // something the user can undo from Finder.
-    await this.app.vault.trash(file, true);
+    // trashFile, not vault.trash: it honours the user's "deleted files"
+    // preference (system trash, vault trash, or permanent) rather than us
+    // picking for them.
+    await this.app.fileManager.trashFile(file);
   }
 
   async rename(from: string, to: string): Promise<void> {

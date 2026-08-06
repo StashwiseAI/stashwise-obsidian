@@ -198,10 +198,11 @@ you can still get them back.
 The plugin talks only to Stashwise. It reads nothing in your vault except the
 `Stashwise` folder and any note you explicitly ask it to save.
 
-Connecting stores an access token in `.obsidian/plugins/stashwise/data.json`,
-unencrypted. That is how every Obsidian plugin holding an API key works, and it
-has a consequence worth knowing: **if you sync your vault through iCloud,
-Dropbox or Obsidian Sync, the token goes with it.**
+Connecting stores an access token unencrypted inside your vault, under the
+plugin folder (usually `.obsidian/plugins/stashwise/`, though Obsidian lets you
+move the config folder). That is how every Obsidian plugin holding an API key
+works, and it has a consequence worth knowing: **if you sync your vault through
+iCloud, Dropbox or Obsidian Sync, the token goes with it.**
 
 **Disconnect** revokes the token on the server, not just locally, so a copy that
 has travelled elsewhere stops working.
