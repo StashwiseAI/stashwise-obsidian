@@ -8,6 +8,9 @@ reads it and builds a wiki of the topics that keep coming up. This plugin puts
 that in the vault where you already think, so saved material sits beside your
 own writing instead of behind another app.
 
+It works on your phone too. Save something from any app with the Stashwise
+share sheet, open Obsidian on the same phone, and the note is waiting for you.
+
 ![Obsidian graph view showing Stashwise wiki topics linked to each other](docs/images/graph.png)
 
 *Your wiki topics in Obsidian's graph view, linked the way Stashwise found them.*
@@ -107,6 +110,35 @@ link or a quote, or opened at its source.*
 
 **Write back.** Anything you type underneath a synced note is sent to Stashwise
 as your note on that item, so it is there in the app and in chat too.
+
+## On your phone
+
+The plugin runs on Obsidian for iOS and Android, which makes a loop that is
+otherwise hard to get: **capture on your phone, and it lands in your vault
+without a computer involved.**
+
+1. Share something to Stashwise from any app, a video, a post, an article
+2. Stashwise reads it and writes the summary, takeaways and wiki topics
+3. Open Obsidian on the same phone. It syncs when it comes to the foreground,
+   and the note is there
+
+Nothing to paste, and no laptop step in the middle. The same applies in
+reverse: search your library and insert a link from the phone, and notes you
+write under a synced item go back to Stashwise.
+
+**Connecting is one tap.** Tap **Connect account** and the Stashwise app opens
+directly if you have it installed, already signed in, so there is no code to
+type and no signing in again in a mobile browser. Without the app you get the
+same page in your browser, which works too.
+
+Two honest caveats:
+
+- The foreground sync respects your **Sync every** setting. At the default of 15
+  minutes, opening Obsidian twice in a minute syncs once. Run **Stashwise: Sync
+  now** when you want it immediately.
+- Analysis takes a moment. Open Obsidian the instant you save and the note may
+  read *Still being analyzed*; it fills itself in on a later sync, without you
+  doing anything.
 
 ## Your writing is never overwritten
 
