@@ -73,7 +73,11 @@ export class StashwiseSettingTab extends PluginSettingTab {
       setting.addButton((button) =>
         button
           .setButtonText("Disconnect")
-          .setDestructive()
+          // setWarning rather than its replacement setDestructive: the latter
+          // arrived in 1.13.0, and this plugin runs on 1.7.2. Deprecated is not
+          // removed, and honouring minAppVersion matters more than the newer
+          // spelling of the same red button. Swap it when the floor rises.
+          .setWarning()
           .onClick(async () => {
             await this.plugin.disconnect();
             this.display();
