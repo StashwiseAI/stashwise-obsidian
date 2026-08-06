@@ -11,16 +11,17 @@
 
 set -euo pipefail
 
-BACKEND="${1:-../.wt-flow-app-obsidian-sync/backend}"
+BACKEND="${1:-${STASHWISE_BACKEND:-}}"
 PORT="${E2E_PORT:-8078}"
 DB="/tmp/stashwise-obsidian-e2e.db"
 VAULT="/tmp/stashwise-obsidian-e2e-vault"
 LOG="/tmp/stashwise-obsidian-e2e-server.log"
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-if [ ! -d "$BACKEND" ]; then
-  echo "Backend not found at: $BACKEND"
-  echo "Pass the path to flow-app/backend as the first argument."
+if [ -z "$BACKEND" ] || [ ! -d "$BACKEND" ]; then
+  echo "Stashwise backend not found."
+  echo "Pass its path as the first argument, or set STASHWISE_BACKEND."
+  echo "  ./scripts/e2e-full.sh /path/to/backend"
   exit 1
 fi
 BACKEND="$(cd "$BACKEND" && pwd)"
