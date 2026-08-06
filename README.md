@@ -8,6 +8,10 @@ reads it and builds a wiki of the topics that keep coming up. This plugin puts
 that in the vault where you already think, so saved material sits beside your
 own writing instead of behind another app.
 
+![Obsidian graph view showing Stashwise wiki topics linked to each other](docs/images/graph.png)
+
+*Your wiki topics in Obsidian's graph view, linked the way Stashwise found them.*
+
 ## Install
 
 ### From Obsidian
@@ -49,10 +53,19 @@ sync from a computer.
 
 ## First run
 
-**Connect your account.** Settings, **Stashwise**, click **Connect account**. A
-browser opens (or the Stashwise app, on iPhone) where you approve the
-connection. Obsidian connects a few seconds later. You need a Stashwise account;
-the free plan works.
+**Connect your account.** Settings, **Stashwise**, click **Connect account**.
+
+![The Stashwise settings tab in Obsidian, showing Not connected and a Connect account button](docs/images/connect.png)
+
+A browser opens, or the Stashwise app if you have it on iPhone, where you
+approve the connection.
+
+![The Stashwise authorize page, headed Authorize Stashwise for Obsidian, listing what access is granted](docs/images/authorize.png)
+
+![The same page after approving, showing Connected and the name of the linked vault](docs/images/connected.png)
+
+Obsidian picks it up a few seconds later; there is nothing to copy back. You
+need a Stashwise account, and the free plan works.
 
 **Sync.** It syncs on its own every 15 minutes, or run **Stashwise: Sync now**
 from the command palette to start immediately. The first sync takes a moment if
@@ -76,6 +89,11 @@ unconnected notes.
 to open the Stashwise panel, or run **Stashwise: Search and insert a link** from
 the command palette to search and drop a result at your cursor without touching
 the mouse.
+
+![The Stashwise search panel in Obsidian, showing results that mix saved items and wiki topics](docs/images/search.png)
+
+*Saves and wiki topics come back together. Each result can be inserted as a
+link or a quote, or opened at its source.*
 
 | Command | What it does |
 |---|---|
@@ -115,9 +133,19 @@ Everything down here is yours. It is never touched.
 Everything between the markers is refreshed on every sync. Everything below the
 end marker belongs to you.
 
+![A synced note in Obsidian, showing the Stashwise region and the user's own notes below the end marker](docs/images/note.png)
+
+*Above the end marker is regenerated. Below it is untouched, and sent back to
+Stashwise as your note on that item.*
+
 If those markers go missing, **the plugin refuses to write to that file** and
 tells you it skipped it. It will not guess where your writing begins. A note you
 have to repair is recoverable; overwritten writing is not.
+
+Each note also carries its Stashwise metadata as properties, so you can sort
+and query them with Dataview or Obsidian's own search.
+
+![Obsidian's properties panel showing a synced note's Stashwise id, source URL, platform, timestamps and tags](docs/images/properties.png)
 
 ## Settings
 
