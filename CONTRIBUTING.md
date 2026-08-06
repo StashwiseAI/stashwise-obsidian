@@ -58,6 +58,16 @@ short-circuit so you may only see one violation at a time:
 - characters limited to `A-Za-z0-9`, whitespace, and `. , ! ? ' " -`, which
   means **no colon**, no parentheses and no slash
 
+The directory applies one further rule the linter has no check for: the
+description **must not start with the plugin's own name**. So `npm run lint`
+also runs `scripts/verify-manifest.mjs`, which covers that, the 200 character
+cap on the directory listing field, and our no dashes rule. What the linter
+already checks is deliberately left to it rather than copied, because a
+duplicated check can drift from the real one and give false confidence.
+
+Each of these constraints cost a release to discover. Run `npm run lint` before
+touching the description and it will tell you for free.
+
 ## The settings tab renders two ways, and Obsidian picks one
 
 This is the thing to understand before touching `src/settings.ts`.

@@ -1,9 +1,9 @@
 {
   "id": "stashwise",
   "name": "Stashwise",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "minAppVersion": "1.7.2",
-  "description": "Stashwise reads the videos, posts and articles you save from your phone and writes the summary and key points. Those notes land in your vault, ready to search, link and build on.",
+  "description": "Save a video, post or article from your phone and Stashwise reads it for you. The summary, takeaways and topics arrive in your vault as notes you can search and link.",
   "author": "Stashwise",
   "authorUrl": "https://stashwise.co",
   "isDesktopOnly": false
